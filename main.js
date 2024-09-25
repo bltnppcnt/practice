@@ -40,6 +40,20 @@ window.onload = (e) => {
     if (document.title === "Tangent Planes") {
         set_tan_curves();
     }
+    if (document.title === "Partial Derivatives") {
+        set_partials();
+    }
+}
+function gcd(x, y) {
+    while (x > 0 && y > 0) {
+        if (x > y) {
+            x = x % y;
+        }
+        else {
+            y = y % x;
+        }
+    }
+    return Math.max(x, y);
 }
 function set_vectors() {
     let q = document.getElementById("question");
@@ -84,20 +98,6 @@ function set_roots() {
     c2 = res / (square * square);
     MathJax.typeset();
 }
-function equiv(x, y, add) {
-    if (x === y + '') {
-        return true;
-    }
-    if (y === 0 && add) {
-        return x === '0' || x === '';
-    }
-    if (y === 1 && !add) {
-        return x === '1' || x === '';
-    }
-    if (y === -1 && !add) {
-        return x === '-1' || x === '-';
-    }
-}
 function set_tan_curves() {
     let q = document.getElementById("question");
     let list = [];
@@ -129,6 +129,77 @@ function set_tan_curves() {
     ${list[5] !== 1 ? '^' + list[5] : ''}
     \\text{ at the point }
     (${list[6]},${list[7]},${z})?\\)`;
+    MathJax.typeset();
+}
+function set_partials() {
+    let q = document.getElementById("question");
+    let [num, denom] = [0, 0];
+    let part = 0;
+    let p_list = [];
+    let c_list = [];
+    let x_list = [];
+    while (denom === 0) {
+        p_list = [];
+        for (let i = 0; i < 6; i++) {
+            p_list.push(Math.floor(Math.random() * 3 + 1));
+        }
+        c_list = [];
+        for (let i = 0; i < 3; i++) {
+            let m = Math.floor(Math.random() * 11 - 5);
+            while (m === 0) {
+                m = Math.floor(Math.random() * 11 - 5);
+            }
+            c_list.push(m);
+        }
+        x_list = [];
+        for (let i = 0; i < 3; i++) {
+            let m = Math.floor(Math.random() * 5 - 2);
+            while (m === 0) {
+                m = Math.floor(Math.random() * 5 - 2);
+            }
+            x_list.push(m);
+        }
+        part = Math.floor(Math.random() * 6);
+        let x_partial = p_list[0] * c_list[0] * Math.pow(x_list[0], p_list[0] - 1) * Math.pow(x_list[1], p_list[1]) +
+            p_list[5] * c_list[2] * Math.pow(x_list[2], p_list[4]) * Math.pow(x_list[0], p_list[5] - 1);
+        let y_partial = p_list[1] * c_list[0] * Math.pow(x_list[0], p_list[0]) * Math.pow(x_list[1], p_list[1] - 1) +
+            p_list[2] * c_list[1] * Math.pow(x_list[1], p_list[2] - 1) * Math.pow(x_list[2], p_list[3]);
+        let z_partial = p_list[3] * c_list[1] * Math.pow(x_list[1], p_list[2]) * Math.pow(x_list[2], p_list[3] - 1) +
+            p_list[4] * c_list[2] * Math.pow(x_list[2], p_list[4] - 1) * Math.pow(x_list[0], p_list[5]);
+        if (part === 0) {
+            [num, denom] = [x_partial, y_partial];
+        }
+        if (part === 1) {
+            [num, denom] = [y_partial, z_partial];
+        }
+        if (part === 2) {
+            [num, denom] = [z_partial, x_partial];
+        }
+        if (part === 3) {
+            [num, denom] = [x_partial, z_partial];
+        }
+        if (part === 4) {
+            [num, denom] = [y_partial, x_partial];
+        }
+        if (part === 5) {
+            [num, denom] = [z_partial, y_partial];
+        }
+        let g = gcd(Math.abs(num), Math.abs(denom));
+        c1 = num / g, c2 = denom / g;
+    }
+    q.textContent = `\\(\\text{Given }F(x,y,z)=
+    ${Math.abs(c_list[0]) === 1 ? c_list[0] === -1 ? '-' : '' : c_list[0]}
+    x${p_list[0] !== 1 ? '^' + p_list[0] : ''}
+    y${p_list[1] !== 1 ? '^' + p_list[1] : ''}${c_list[1] < 0 ? '' : '+'}
+    ${Math.abs(c_list[1]) === 1 ? c_list[1] === -1 ? '-' : '' : c_list[1]}
+    y${p_list[2] !== 1 ? '^' + p_list[2] : ''}
+    z${p_list[3] !== 1 ? '^' + p_list[3] : ''}${c_list[2] < 0 ? '' : '+'}
+    ${Math.abs(c_list[2]) === 1 ? c_list[2] === -1 ? '-' : '' : c_list[2]}
+    z${p_list[4] !== 1 ? '^' + p_list[4] : ''}
+    x${p_list[5] !== 1 ? '^' + p_list[5] : ''}, 
+    \\text{ calculate }(\\frac{\\partial ${['x', 'y', 'z'][part % 3]}}{\\partial ${['y', 'z', 'x', 'z', 'x', 'y'][part]}})_{${['z', 'x', 'y', 'y', 'z', 'x'][part]}}
+    \\text{ at }(${x_list[0]},${x_list[1]},${x_list[2]}).
+    \\)`;
     MathJax.typeset();
 }
 function submit() {
@@ -201,6 +272,18 @@ function submit4() {
     output.style.visibility = "visible";
     MathJax.typeset();
 }
+function submit5() {
+    if (!can_submit) {
+        return;
+    }
+    can_submit = false;
+    let output = document.getElementById("result");
+    output.textContent = `\\(\\text{The answer was }${c1 * c2 < 0 ? '-' : ''}
+    ${Math.abs(c2) === 1 ? c1 : '\\frac{' + Math.abs(c1) + '}{' + Math.abs(c2) + '}'}.\\)`;
+    document.getElementById("next").style.visibility = "visible";
+    output.style.visibility = "visible";
+    MathJax.typeset();
+}
 function cont() {
     can_submit = true;
     if (document.title === "Dot Product Practice") {
@@ -223,6 +306,9 @@ function cont() {
     }
     if (document.title === "Tangent Planes") {
         set_tan_curves();
+    }
+    if (document.title === "Partial Derivatives") {
+        set_partials();
     }
     document.getElementById("next").style.visibility = "hidden";
     document.getElementById("result").style.visibility = "hidden";
