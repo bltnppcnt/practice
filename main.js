@@ -1,9 +1,9 @@
-﻿let nav_idx = -1;
+let nav_idx = -1;
 let hovering = false;
-const nav_links = [[], ["dot.html", "cross.html", "simplify.html"], ["tangent.html"], ["about.html"]];
-const nav_titles = [[], ["Dot Product", "Cross Product", "Square Roots"], ["Tangent Planes"], ["About"]];
+const nav_links = [[], ["dot.html", "cross.html", "simplify.html"], ["tangent.html","pderiv.html"], ["about.html"]];
+const nav_titles = [[], ["Dot Product", "Cross Product", "Square Roots"], ["Tangent Planes", "Partials"], ["About"]];
 let [a, b, c, d, e, f] = [0, 0, 0, 0, 0, 0];
-let [c1, c2, c3] = [0, 0, 0];
+let [c1, c2, c3, c4, c5] = [0, 0, 0, 0, 0];
 let can_submit = true;
 document.addEventListener("click", function (e) {
     let elem = document.getElementById("menu");
@@ -37,43 +37,42 @@ window.onload = (e) => {
     if (document.title === "Square Root Practice") {
         set_roots();
     }
+    if (document.title === "Tangent Planes") {
+        set_tan_curves();
+    }
 }
 function set_vectors() {
-    let v1 = document.getElementById("v1");
-    let v2 = document.getElementById("v2");
+    let q = document.getElementById("question");
     let list = [];
     for (let i = 0; i < 6; i++) {
         list.push(Math.floor(Math.random() * 21 - 10));
     }
     [a, b, c, d, e, f] = list;
-    v1.textContent = a + ", " + b + ", " + c;
-    v2.textContent = d + ", " + e + ", " + f;
+    q.innerHTML = `\\(\\text{What is }\\langle${a},${b},${c}\\rangle\\cdot\\langle${d},${e},${f}\\rangle?\\)`;
     c1 = a * d + b * e + c * f;
+    MathJax.typeset();
 }
 function set_vectors2() {
-    let v1 = document.getElementById("v1");
-    let v2 = document.getElementById("v2");
+    let q = document.getElementById("question");
     let list = [];
     for (let i = 0; i < 6; i++) {
         list.push(Math.floor(Math.random() * 21 - 10));
     }
     [a, b, c, d, e, f] = list;
-    v1.textContent = a + ", " + b + ", " + c;
-    v2.textContent = d + ", " + e + ", " + f;
+    q.innerHTML = `\\(\\text{What is }\\langle${a},${b},${c}\\rangle\\times\\langle${d},${e},${f}\\rangle?\\)`;
     c1 = b * f - c * e;
     c2 = c * d - a * f;
     c3 = a * e - b * d;
+    MathJax.typeset();
 }
 function set_roots() {
-    let v1 = document.getElementById("v1");
-    let v2 = document.getElementById("v2");
-    let v3 = document.getElementById("v3");
+    let q = document.getElementById("question");
     let list = [];
     for (let i = 0; i < 3; i++) {
         list.push(Math.floor(Math.random() * 20 + 1));
     }
     let [a, b, c] = list;
-    [v1.textContent, v2.textContent, v3.textContent] = [a + "", b + "", c + ""];
+    q.innerHTML = `\\(\\text{Simplify } \\sqrt{${a}^2+${b}^2+${c}^2}.\\)`;
     let res = a * a + b * b + c * c;
     let square = 1;
     for (let num = 1; num * num <= res; num++) {
@@ -83,6 +82,54 @@ function set_roots() {
     }
     c1 = square;
     c2 = res / (square * square);
+    MathJax.typeset();
+}
+function equiv(x, y, add) {
+    if (x === y + '') {
+        return true;
+    }
+    if (y === 0 && add) {
+        return x === '0' || x === '';
+    }
+    if (y === 1 && !add) {
+        return x === '1' || x === '';
+    }
+    if (y === -1 && !add) {
+        return x === '-1' || x === '-';
+    }
+}
+function set_tan_curves() {
+    let q = document.getElementById("question");
+    let list = [];
+    for (let i = 0; i < 6; i++) {
+        list.push(Math.floor(Math.random() * 3 + 1));
+    }
+    if (list[2] === list[5]) {
+        if (list[2] === 5) {
+            list[5] -= 1;
+        }
+        else {
+            list[5] += 1;
+        }
+    }
+    for (let i = 0; i < 2; i++) {
+        list.push(Math.floor(Math.random() * 5 - 2));
+    }
+    let z = list[0] * Math.pow(list[6], list[1]) * Math.pow(list[7], list[2]) + list[3] * Math.pow(list[6], list[4]) * Math.pow(list[7], list[5]);
+    c1 = list[0] * list[1] * Math.pow(list[6], list[1] - 1) * Math.pow(list[7], list[2]) + list[3] * list[4] * Math.pow(list[6], list[4] - 1) * Math.pow(list[7], list[5]);
+    c2 = -list[6];
+    c3 = list[0] * list[2] * Math.pow(list[6], list[1]) * Math.pow(list[7], list[2] - 1) + list[3] * list[5] * Math.pow(list[6], list[4]) * Math.pow(list[7], list[5] - 1);
+    c4 = -list[7];
+    c5 = -z;
+    q.textContent = `\\(\\text{What is the equation of the plane tangent to}\\
+    z=${list[0] !== 1 ? list[0] : ''}x${list[1] !== 1 ? '^' + list[1] : ''}
+    y${list[2] !== 1 ? '^' + list[2] : ''}+
+    ${list[3] !== 1 ? list[3] : ''}x
+    ${list[4] !== 1 ? '^' + list[4] : ''}y
+    ${list[5] !== 1 ? '^' + list[5] : ''}
+    \\text{ at the point }
+    (${list[6]},${list[7]},${z})?\\)`;
+    MathJax.typeset();
 }
 function submit() {
     if (!can_submit) {
@@ -93,12 +140,14 @@ function submit() {
     let output = document.getElementById("result");
     let val = val_elem.value;
     if (val === c1 + "") {
-        output.textContent = "Correct.";
+        output.innerHTML = "\\(\\text{Correct.}\\)";
     }
     else {
-        output.textContent = `Incorrect. Answer was ${c1}.`;
+        output.innerHTML = `\\(\\text{Incorrect. Answer was }${c1}.\\)`;
     }
     document.getElementById("next").style.visibility = "visible";
+    output.style.visibility = "visible";
+    MathJax.typeset();
 }
 function submit2() {
     if (!can_submit) {
@@ -109,12 +158,14 @@ function submit2() {
     let output = document.getElementById("result");
     let [a1, a2, a3] = [val_elems[0].value, val_elems[1].value, val_elems[2].value];
     if (a1 === c1 + "" && a2 === c2 + "" && a3 === c3 + "") {
-        output.textContent = "Correct.";
+        output.innerHTML = "\\(\\text{Correct.}\\)"
     }
     else {
-        output.textContent = `Incorrect. Answer was 〈${c1}, ${c2}, ${c3}〉.`;
+        output.innerHTML = `\\(\\text{Incorrect. Answer was }\\langle${c1},${c2},${c3}\\rangle.\\)`;
     }
     document.getElementById("next").style.visibility = "visible";
+    output.style.visibility = "visible";
+    MathJax.typeset();
 }
 function submit3() {
     if (!can_submit) {
@@ -125,12 +176,30 @@ function submit3() {
     let output = document.getElementById("result");
     let [a1, a2] = [val_elems[0].value, val_elems[1].value];
     if ((a1 === c1 + "" || a1 === "" && c1 === 1) && (a2 === c2 + "" || a2 === "" && c2 === 1)) {
-        output.textContent = "Correct.";
+        output.textContent = "\\(\\text{Correct.}\\)";
     }
     else {
-        output.textContent = `Incorrect. Answer was ${c1 === 1 && c2 !== 1 ? "" : c1}√${c2 === 1 ? "" : c2}.`;
+        output.textContent = `\\(\\text{Incorrect. Answer was }${c1 === 1 && c2 !== 1 ? "" : c1}\\sqrt{${c2 === 1 ? "" : c2}}.\\)`;
     }
     document.getElementById("next").style.visibility = "visible";
+    output.style.visibility = "visible";
+    MathJax.typeset();
+}
+function submit4() {
+    if (!can_submit) {
+        return;
+    }
+    can_submit = false;
+    let output = document.getElementById("result");
+    output.textContent = `\\(\\text{The answer was }
+        0=${c1 === 0 ? '' : Math.abs(c1) === 1 ? c2 === 0 ? c1 < 0 ? '-x' : 'x' : '(x' + (c2 < 0 ? '' : '+') + c2 + ')' : c1 + (c2 === 0 ? 'x' : '(x' + (c2 < 0 ? '' : '+') + c2 + ')')}
+        ${(c3 <= 0 || c1 === 0 ? '' : '+')}
+        ${c3 === 0 ? '' : Math.abs(c3) === 1 ? c4 === 0 ? c3 < 0 ? '-y' : 'y' : '(y' + (c4 < 0 ? '' : '+') + c4 + ')' : c3 + (c4 === 0 ? 'y' : '(y' + (c4 < 0 ? '' : '+') + c4 + ')')}
+        -
+        ${c5 === 0 ? 'z' : '(z' + (c5 < 0 ? '' : '+') + c5 + ')'}.\\)`;
+    document.getElementById("next").style.visibility = "visible";
+    output.style.visibility = "visible";
+    MathJax.typeset();
 }
 function cont() {
     can_submit = true;
@@ -152,8 +221,11 @@ function cont() {
         val_elems[1].value = "";
         set_roots();
     }
+    if (document.title === "Tangent Planes") {
+        set_tan_curves();
+    }
     document.getElementById("next").style.visibility = "hidden";
-    document.getElementById("result").textContent = "";
+    document.getElementById("result").style.visibility = "hidden";
 }
 function menu(i) {
     let elem = document.getElementById("menu");
