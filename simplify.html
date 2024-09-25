@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Square Root Practice</title>
+    <link href="style.css" rel="stylesheet" />
+    <script src="main.js"></script>
+</head>
+<body>
+    <div id="nav-bar">
+        <a href="index.html"><div class="nav-item" id="a-main">Multi Practice</div></a>
+        <div class="nav-item" id="a-comp" onclick="menu(1)">Computation</div>
+        <div class="nav-item" id="a-other" onclick="menu(2)">Other</div>
+        <div id="menu"></div>
+    </div>
+    <div id="text-block">Square Root Trainer</div>
+    <div id="description">Train your computation accuracy</div>
+    <hr /><hr />
+    <div id="question">Simplify √<span id="v1"></span>²+<span id="v2"></span>²+<span id="v3"></span>².</div>
+    <div style="margin: auto; width: 321px; font-size: 30px">
+        <input class="question-inputs" />√
+        <input class="question-inputs" />
+    </div>
+    <div id="submit" onclick="submit3()">Submit</div>
+    <div id="result"></div>
+    <div id="next" onclick="cont()">Next</div>
+</body>
+</html>
