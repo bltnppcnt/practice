@@ -14,7 +14,6 @@ document.addEventListener("click", function (e) {
         elem.style.height = "0";
         nav_idx = -1;
     }
-    console.log(hovering);
 })
 window.onload = (e) => {
     document.getElementById("nav-bar").innerHTML = `<a href="index.html"><div class="nav-item" id="a-main">Multi Practice</div></a>
@@ -97,10 +96,23 @@ function render_plane(a, b, c, d, e, f) { // 0=a(x-d)+b(y-e)+c(z-f)
         '(' + k + (lst[3 + i] > 0 ? '' : '+') + (-lst[3 + i]) + ')' : lst[i] +
         (lst[3 + i] === 0 ? k : '(' + k + (lst[3 + i] > 0 ? '' : '+') + (-lst[3 + i]) + ')')}`;
         if (i === 0) {
-            ret += `${lst[1] === 0 ? lst[2] === 0 ? '' : lst[2] < 0 ? '' : '+' : lst[1] < 0 ? '' : '+'}`;
+            if (lst[0] !== 0) {
+                if (lst[1] === 0) {
+                    if (lst[2] > 0) {
+                        ret += '+';
+                    }
+                }
+                if (lst[1] > 0) {
+                    ret += '+'
+                }
+            }
         }
         if (i === 1) {
-            ret += `${lst[1] === 0 ? '' : lst[2] < 0 ? '' : '+'}`;
+            if (lst[1] !== 0) {
+                if (lst[2] > 0) {
+                    ret += '+';
+                }
+            }
         }
     }
     return ret;
