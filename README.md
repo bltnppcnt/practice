@@ -1,2 +1,2 @@
-# multi
-bltnppcnt.github.io/multi
+# practice
+bltnppcnt.github.io/practice
